@@ -1,0 +1,23 @@
+{% extends "base.html"%}
+
+{% block title%}Add item{%endblock%}
+
+{% block content %} 
+    <form method="POST">{% csrf_token %}
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Name of the item</label>
+            <input type="text" class="form-control" name="item_name" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Price</label>
+            <input type="text" class="form-control" name="price">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Description</label>
+            <input type="text" class="form-control" name="description" aria-describedby="emailHelp">
+        </div>
+        <button type="submit" class="btn btn-primary">Add item</button>
+        
+    </form>
+
+{% endblock %}
