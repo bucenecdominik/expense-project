@@ -5,4 +5,4 @@ class Item(models.Model):
     description = models.TextField()
     time_it_was_bought = models.DateTimeField()
     price = models.IntegerField()
-    
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, default=None)

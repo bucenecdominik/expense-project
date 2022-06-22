@@ -3,27 +3,72 @@
 {% block title%}Money spent today{%endblock%}
 
 {% block content %} 
-    <h1>Money spent today</h1>
-    <table class="table table-dark table-striped">
-        <thead>
-        <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Item name</th>
-            <th scope="col">Item description</th>
-            <th scope="col">Price</th>
-            <th scope="col">Time the item was bought</th>
-        </tr>
-        </thead>
-        <tbody>
-            {% for item in items %}
-                <tr>
-                    <th scope="row">{{item.id}}</th>
-                    <td>{{item.name}}</td>
-                    <td>{{item.description}}</td>
-                    <td>{{item.price}} kč</td>
-                    <td>{{item.time_it_was_bought}}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    
+        <div class="container-fluid">
+            <div class="row text-white"><h1>Money spent today</h1></div>
+            <div class="row">
+                <div class="col">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Item name</th>
+                                <th scope="col">Item description</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Time the item was bought</th>
+                                <th scope="col">user</th>
+                                <th scope="col">Delete the item</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in items %}
+                                    <tr>
+                                        <th scope="row">{{item.id}}</th>
+                                        <td>{{item.name}}</td>
+                                        <td>{{item.description}}</td>
+                                        <td>{{item.price}} kč</td>
+                                        <td>{{item.time_it_was_bought}}</td>
+                                        <td>{{item.user}}</td>
+                                        <td><a href="{% url 'delete_item' item_id=item.id %}">Delete</a></td> 
+                                    </tr>
+                            {% endfor %}
+                            </tbody>
+                    </table>
+                </div>
+                <div class="col-md-auto">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <th scope="col">Summary of the items</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Celková cena {{sum_price}} Kč</td>
+                            </tr>
+                        </tbody>
+                    </table> 
+                </div>
+                <div class="col-3 bg-dark text-white">
+                    <form method="POST">{% csrf_token %}
+                        <div class="mb-3 w-100 p-3">
+                            <label for="exampleInputEmail1" class="form-label">Name of the item</label>
+                            <input type="text" class="form-control" name="item_name" aria-describedby="emailHelp">
+                        </div>
+                        <div class="mb-3 w-100 p-3">
+                            <label for="exampleInputPassword1" class="form-label">Price</label>
+                            <input type="text" class="form-control" name="price">
+                        </div>
+                        <div class="mb-3 w-100 p-3">
+                            <label for="exampleInputEmail1" class="form-label">Description</label>
+                            <input type="text" class="form-control" name="description" aria-describedby="emailHelp">
+                        </div>
+                        <div class="mb-3 w-100 p-3">
+                            <button type="submit" class="btn btn-primary">Add item</button>
+                        </div>
+                        
+                        
+                    </form>
+                </div>
+            </div>
+        </div>
+            
 {% endblock %}

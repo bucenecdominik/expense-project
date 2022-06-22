@@ -3,6 +3,7 @@
 {% block title%}Hello {{ name }} {% endblock %}
 
 {% block content %}
+    {% if user.is_authenticated %}
     <table class="table table-dark table-striped">
         <thead>
         <tr>
@@ -25,6 +26,7 @@
             {% endfor %}
         </tbody>
     </table>
+    {% endif %}
 
 
 {% endblock %}

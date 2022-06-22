@@ -1,25 +1,31 @@
-from aiohttp import request
+
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from .models import Item
 from datetime import date, datetime
+from .forms import ItemCreationForm
 
 # Create your views here.
 def index(request):
     user = request.user
+    
     if not user: 
         return redirect('login_user')
     else:
+        name = user.username
         item_list = Item.objects.all()
         return render(request, "index.html", {
-        'item_list' : item_list
+        'item_list' : item_list,
+        'name' : name,
         })
 
 
-def delete_item(request):
-    pass
+def delete_item(request, item_id):
+    item = Item.objects.get(id = item_id)
+    item.delete()
+    return render(request, 'index.html')
 
 #login the user  
 def login_user(request):
@@ -49,6 +55,9 @@ def logout_user(request):
 
 #adds item to the database
 def add_item(request):
+    pass
+    
+def money_spent_today(request):
     if request.method == 'POST':
         name = request.POST['item_name']
         description = request.POST['description']
@@ -57,29 +66,35 @@ def add_item(request):
         user = request.user
         item = Item.objects.create(name=name, description=description, time_it_was_bought=time_it_was_bought, price=price, user=user)
         item.save()
-        return render(request, "add_item.html")
+        items = Item.objects.filter(time_it_was_bought__date=date.today(), user = request.user)
+        sum_price = sum(item.price for item in items)
+        return render(request, 'money_spent_today.html', {
+            'items' : items,
+            'sum_price' : sum_price,
+        })
     else:
-        return render(request, "add_item.html")
-    
-def money_spent_today(request):
-    items = Item.objects.filter(time_it_was_bought__date=date.today(), user = request.user)
-
-    return render(request, 'money_spent_today.html', {
-        'items' : items
-    })
+        items = Item.objects.filter(time_it_was_bought__date=date.today(), user = request.user)
+        sum_price = sum(item.price for item in items)
+        return render(request, 'money_spent_today.html', {
+            'items' : items,
+            'sum_price' : sum_price,
+        })
 
 def money_spent_this_month(request):
     items = Item.objects.filter(time_it_was_bought__month = datetime.now().month, user = request.user)
-
+    sum_price = sum(item.price for item in items)
     return render(request, 'money_spent_this_month.html', {
-        'items' : items
+        'items' : items,
+        'sum_price' : sum_price,
     })
 
 def money_spent_this_year(request):
     items = Item.objects.filter(time_it_was_bought__year = datetime.now().year, user = request.user)
+    sum_price = sum(item.price for item in items)
 
     return render(request, 'money_spent_this_month.html', {
-        'items' : items
+        'items' : items,
+        'sum_price' : sum_price,
     })
 
 
