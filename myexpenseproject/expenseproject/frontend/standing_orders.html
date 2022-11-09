@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Standing orders{% endblock %}
+{% block content %}
+<div class="container-fluid bg-dark">
+  <div class="row">
+    <div class="col-md-12">
+      <h1 class="text-warning text-center">Standing orders</h1>
+    </div>
+  </div>
+</div>
+<div class="container-fluid d-grid gap-3 mt-3 mb-3">
+    
+    <div class="row ">
+        <div class="col-md-9 bg-warning d-grid gap-3"> 
+            {% for order in standing_order %}
+            <div class="card bg-dark text-warning">
+                <div class="card-body p-3">
+                  <h2>{{order.name}}</h2>
+                  <h4>{{order.description}}</h4>
+                  <h4>Importance: <span class="badge badge-secondary bg-warning text-dark">{{order.type}}</span></h4>
+                  <h4>{{order.price}} kč</h4>
+                  <button class="btn btn-danger mt-3"><a class="link-light text-decoration-none"href="{% url 'delete_order' id=order.id %}">DELETE</a></button>
+                  <button class="btn btn-warning mt-3"><a class="link-dark text-decoration-none"href="{% url 'update_order' id=order.id %}">UPDATE INFO</a></button>
+                </div>
+                
+            </div>
+            {% endfor%}
+        </div>
+        <div class="col-md-3 bg-warning">
+            <div class="card card-body bg-dark text-white">
+                <form method="post" class="form-group">
+                  
+                    {% csrf_token %}
+                    {%for field in form %}
+                    <div class="text-warning">{{field.label}}</div>
+                    <div class="">{{field}}</div>                    
+                    {% endfor %}
+                    <br>
+                    <button type="submit" class="btn btn-warning mt-3">Place standing order</button>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+{% endblock %}

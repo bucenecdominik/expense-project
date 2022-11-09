@@ -1,6 +1,19 @@
-from django import forms
+from django.forms import ModelForm
+from django.contrib.auth.models import User
+from .models import *
 
-class ItemCreationForm(forms.Form):
-    item_name = forms.CharField(max_length=25)
-    description = forms.CharField(widget=forms.Textarea)
-    price = forms.IntegerField()
+
+class StandingOrderForm(ModelForm):
+    class Meta:
+        model = StandingOrder
+        fields = ['name', 'price', 'description', 'type']
+
+class UserUpdateForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+
+class ItemForm(ModelForm):
+    class Meta: 
+        model = Item
+        fields = ['price', 'name', 'time_it_was_bought', 'description' ]

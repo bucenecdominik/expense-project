@@ -4,29 +4,60 @@
 
 {% block content %}
     {% if user.is_authenticated %}
-    <table class="table table-dark table-striped">
-        <thead>
-        <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Item name</th>
-            <th scope="col">Item description</th>
-            <th scope="col">Price</th>
-            <th scope="col">Time the item was bought</th>
-        </tr>
-        </thead>
-        <tbody>
-            {% for item in item_list %}
-                <tr>
-                    <th scope="row">{{item.id}}</th>
-                    <td>{{item.name}}</td>
-                    <td>{{item.description}}</td>
-                    <td>{{item.price}} kč</td>
-                    <td>{{item.time_it_was_bought}}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
+    <div class="container-fluid d-grid gap-1">
+        <div class="row bg-dark text-warning">
+            <h1 class="text-center">Home page</h1>
+        </div>
 
+        <div class="row mt-3">
+            <div class="col-md-8">
+                <table class="table table-dark table-hover mt-3">
+                    <thead>
+                    <tr>
+                        <th scope="col" class="text-warning">ID</th>
+                        <th scope="col" class="text-warning">Item name</th>
+                        <th scope="col" class="text-warning">Item description</th>
+                        <th scope="col" class="text-warning">Price</th>
+                        <th scope="col" class="text-warning">Time the item was bought</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in item_list %}
+                            <tr>
+                                <th scope="row" class="text-warning">{{item.id}}</th>
+                                <td class="text-warning">{{item.name}}</td>
+                                <td class="text-warning">{{item.description}}</td>
+                                <td class="text-warning">{{item.price}} kč</td>
+                                <td class="text-warning">{{item.time_it_was_bought}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4 d-grid">
+                <div class="row">
+                        <div class="card card-body bg-dark text-warning rounded-0 m-3">
+                            <p>
+                                Your budget is: <br>
+                                {{budget}} Kč
+                            </p>
+                        </div>
+                </div>
+                <div class="row">
+                        <div class="card card-body bg-dark text-warning rounded-0 m-3">
+                            <p>
+                                zde bude mesicni graf
+                            </p>
+                        </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        
+    </div>
+    {% endif %}
+    
+      
 
 {% endblock %}

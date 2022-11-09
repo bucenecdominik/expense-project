@@ -2,7 +2,7 @@
 {% block title%}Register page{%endblock%}
 {% block content %}  
   
-<div class = "login">  
+<div>  
   
     {% if messages %}  
         <ul>   
@@ -11,17 +11,56 @@
                 {% endfor %}  
         </ul>   
     {% endif %}   
-  
-         <form method="post" action="{% url 'register_user' %}" >  
-             {% csrf_token %}  
-             <table>  
-                {{ form.as_table }}  
-                 <tr>  
-                    <td></td>  
-                    <td><input type="submit" name="submit" value="Register" /></td>  
-                </tr>  
-             </table>  
-         </form>  
-     </div>  
-  
+    <section class="vh-100 gradient-custom bg-warning">
+        <div class="container p-3 h-100 ">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+              <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                <div class="card-body p-5 text-center">
+                    <form method="post" action="{% url 'register_user' %}" >  
+                      {% csrf_token %}  
+                              
+                        {{ form }}  
+                            
+                        
+                        <button type="submit" class="btn btn-warning">Submit</button> 
+                         
+                    </form>  
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer class="bg-dark text-center text-warning fixed-bottom">
+      <!-- Grid container -->
+      <div class="container p-4 pb-0">
+        <!-- Section: Social media -->
+        <section class="mb-4">
+          <!-- Facebook -->
+          <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+            ><i class="fab fa-facebook-f"></i
+          ></a>
+    
+          <!-- Twitter -->
+          <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+            ><i class="fab fa-twitter"></i
+          ></a>
+    
+          <!-- Google -->
+          <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+            ><i class="fab fa-google"></i
+          ></a>
+        </section>
+        <!-- Section: Social media -->
+      </div>
+      <!-- Grid container -->
+    
+      <!-- Copyright -->
+      <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        © 2022 Copyright:
+        <a class="text-warning" href="https://mdbootstrap.com/">Bučenec Dominik</a>
+      </div>
+      <!-- Copyright -->
+    </footer>
 {% endblock content %}  

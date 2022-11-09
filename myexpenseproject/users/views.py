@@ -1,33 +1,45 @@
 
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_object_or_404
+from django.urls import resolve, reverse
+from django.contrib.auth.models import User
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-from .models import Item
+from .forms import StandingOrderForm, UserUpdateForm
+from .models import Item, StandingOrder
 from datetime import date, datetime
-from .forms import ItemCreationForm
+from .filters import ItemFilter
+from django.views.generic import *
+from .forms import ItemForm
+
+
 
 # Create your views here.
-def index(request):
-    user = request.user
-    
-    if not user: 
-        return redirect('login_user')
-    else:
-        name = user.username
-        item_list = Item.objects.all()
-        return render(request, "index.html", {
-        'item_list' : item_list,
-        'name' : name,
-        })
+class IndexView(View):
+    def get(self, request):
+        user = request.user
+        if not user: 
+            return redirect('login_user')
+        else:
+            name = user.username
+            item_list = Item.objects.all()
+            order_list = StandingOrder.objects.all()
+            sum_price = sum(item.price for item in item_list)
+            budget = 1200000 - sum_price
+            return render(request, "index.html", {
+            'order_list': order_list,
+            'item_list' : item_list,
+            'name' : name,
+            'budget' : budget,
+            })
+
+    def post(self, request):
+        pass
 
 
-def delete_item(request, item_id):
-    item = Item.objects.get(id = item_id)
-    item.delete()
-    return render(request, 'index.html')
 
-#login the user  
+#login user
 def login_user(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -53,12 +65,21 @@ def logout_user(request):
     return redirect('index')
 
 
-#adds item to the database
-def add_item(request):
-    pass
+#Money spent CBV under
+class MoneySpentView(View):
+    model = Item
+    template_name = "money_spent.html"
+    form = ItemForm
     
-def money_spent_today(request):
-    if request.method == 'POST':
+    def get(self, request):
+        items = Item.objects.all()
+        filter = ItemFilter(request.GET, queryset=items)
+        items = filter.qs
+        sum_price = sum(item.price for item in items)
+        context = {'items': items, 'filter': filter, 'sum_price':sum_price}
+        return render(request, self.template_name, context)
+
+    def post(self, request): 
         name = request.POST['item_name']
         description = request.POST['description']
         time_it_was_bought = datetime.now()
@@ -66,37 +87,20 @@ def money_spent_today(request):
         user = request.user
         item = Item.objects.create(name=name, description=description, time_it_was_bought=time_it_was_bought, price=price, user=user)
         item.save()
-        items = Item.objects.filter(time_it_was_bought__date=date.today(), user = request.user)
-        sum_price = sum(item.price for item in items)
-        return render(request, 'money_spent_today.html', {
-            'items' : items,
-            'sum_price' : sum_price,
-        })
-    else:
-        items = Item.objects.filter(time_it_was_bought__date=date.today(), user = request.user)
-        sum_price = sum(item.price for item in items)
-        return render(request, 'money_spent_today.html', {
-            'items' : items,
-            'sum_price' : sum_price,
-        })
+        return HttpResponseRedirect(self.request.path_info)
 
-def money_spent_this_month(request):
-    items = Item.objects.filter(time_it_was_bought__month = datetime.now().month, user = request.user)
-    sum_price = sum(item.price for item in items)
-    return render(request, 'money_spent_this_month.html', {
-        'items' : items,
-        'sum_price' : sum_price,
-    })
+class ItemDetailView(DetailView):
+    model = Item
+    template_name = "detail.html"
 
-def money_spent_this_year(request):
-    items = Item.objects.filter(time_it_was_bought__year = datetime.now().year, user = request.user)
-    sum_price = sum(item.price for item in items)
+    def get_object(self):
+        _id = self.kwargs.get("id")
+        return get_object_or_404(self.model, id=_id)
 
-    return render(request, 'money_spent_this_month.html', {
-        'items' : items,
-        'sum_price' : sum_price,
-    })
-
+def delete_item(request, item_id):
+    item = Item.objects.get(id = item_id)
+    item.delete()
+    return redirect('money_spent')
 
 def register_user(request): 
     if request.method == 'POST':  
@@ -108,10 +112,82 @@ def register_user(request):
             user = authenticate(username=username, password=password)
             login(request, user)
             messages.success(request, 'Account created successfully')
-            return redirect('index')      
+            return render(request, 'index.html')      
     else:  
         form = UserCreationForm()  
     context = {  
         'form':form  
     }  
-    return render(request, 'register.html', context) 
+    return render(request, 'register.html', context)
+
+
+class ProfileView(TemplateView):
+    template_name = "profile.html"
+
+class ProfileUpdateView(UpdateView):
+    template_name = "profile_update.html"
+    form_class = UserUpdateForm
+    model = User
+    success_url = "/users/profile"
+
+    def get_object(self):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(self.model, id=id_)
+
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        return super().form_valid(form)
+
+#Standing order CBV under
+class StandingOrderView(CreateView):
+    template_name = "standing_orders.html"
+    model = StandingOrder
+    form_type = StandingOrderForm
+
+    def get(self, request):
+        standing_orders = self.model.objects.all()
+        form = self.form_type
+        context = {'standing_order': standing_orders, 'form': form }
+        return render(request, self.template_name, context)
+
+
+    def post(self, request):
+        form = self.form_type(request.POST)
+
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.user = request.user
+            obj.save()
+            return redirect('standing_order')
+        else:
+            return redirect('standing_order')
+
+class StandingOrderUpdateView(UpdateView):
+    model = StandingOrder
+    query_set = model.objects.all()
+    template_name = "standing_order_update.html"
+    form_class = StandingOrderForm
+    success_url = "/users/standing_orders"
+
+    def get_object(self):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(self.model, id=id_)
+
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        return super().form_valid(form)
+
+class StandingOrderDeleteView(DeleteView):
+    model = StandingOrder
+    template_name = "standing_order_delete.html"
+    success_url = "/users/standing_orders"
+    
+    def get_object(self):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(self.model, id=id_)
+
+
+
+
+
+

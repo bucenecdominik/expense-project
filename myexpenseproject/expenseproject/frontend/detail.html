@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %} Detail {% endblock%}
+
+{% block content %}
+    <div class="container-fluid bg-warning">
+      <div class="col-md-12 mt-3">
+        
+          <div class="card card-body bg-dark example-1 text-white">
+            <div class="row"><h2>{{ item.name }}</h2></div>
+            <div class="row"><h4>Price: {{ item.price }} kč</h4></div>
+            <div class="row"><h4>Time it was bought: {{ item.time_it_was_bought }}</h4></div>
+            <div class="row"><p>Description: <br>{{ item.description }}</p></div>
+            <div class="row">
+              <div class="mb-3 w-100 p-3">
+                  <button type="submit" class="btn btn-warning mb-3" action="edit_profile">
+                    <a class="link-dark text-decoration-none" href="{% url 'money_spent' %}">
+                    Back
+                    </a>
+                  </button>
+              </div> 
+          
+          </div>
+          
+      </div>
+        
+    </div>
+
+    <footer class="bg-dark text-center text-warning fixed-bottom">
+    <!-- Grid container -->
+    <div class="container p-4 pb-0">
+      <!-- Section: Social media -->
+      <section class="mb-4">
+        <!-- Facebook -->
+        <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+  
+        <!-- Twitter -->
+        <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button">
+          <i class="fab fa-twitter"></i>
+        </a>
+  
+        <!-- Google -->
+        <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button">
+          <i class="fab fa-google"></i>
+        </a>
+      </section>
+      <!-- Section: Social media -->
+    </div>
+    <!-- Grid container -->
+  
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+      © 2022 Copyright:
+      <a class="text-warning" href="https://mdbootstrap.com/">Bučenec Dominik</a>
+    </div>
+    <!-- Copyright -->
+  </footer>
+{% endblock %}

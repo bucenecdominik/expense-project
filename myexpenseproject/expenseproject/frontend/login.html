@@ -2,19 +2,68 @@
 {% block title%}Login page{%endblock%}
 
 {%block content%}
-
-    <form method="POST">{% csrf_token %}
-        <div class="w-50" class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">Username</label>
-        <input type="text" class="form-control" name="username" aria-describedby="emailHelp">
+<section class="vh-100 gradient-custom bg-warning">
+    <div class="container p-5 h-100 ">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+          <div class="card bg-dark text-white" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+              <form method="POST">
+                {% csrf_token %}
+                <div class="mb-md-5 mt-md-4 pb-5">
+  
+                  <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
+                  <p class="text-white-50 mb-5">Please enter your login and password!</p>
+    
+                  <div class="form-outline form-white mb-4">
+                    <input type="text" class="form-control form-control-lg" name="username" />
+                    <label class="form-label" for="typeEmailX">Username</label>
+                  </div>
+    
+                  <div class="form-outline form-white mb-4">
+                    <input type="password" class="form-control form-control-lg" name="password"/>
+                    <label class="form-label" for="typePasswordX">Password</label>
+                  </div>
+    
+                  <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
+    
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
-        <div class="w-50" class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">Password</label>
-        <input type="password" class="form-control" name="password">
-        </div>
-        <br>
-        <button type="submit" class="btn btn-primary">Login</button>
-        
-    </form>
-
+      </div>
+    </div>
+  </section>
+  <footer class="bg-dark text-center text-warning fixed-bottom">
+    <!-- Grid container -->
+    <div class="container p-4 pb-0">
+      <!-- Section: Social media -->
+      <section class="mb-4">
+        <!-- Facebook -->
+        <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+          ><i class="fab fa-facebook-f"></i
+        ></a>
+  
+        <!-- Twitter -->
+        <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+          ><i class="fab fa-twitter"></i
+        ></a>
+  
+        <!-- Google -->
+        <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+          ><i class="fab fa-google"></i
+        ></a>
+      </section>
+      <!-- Section: Social media -->
+    </div>
+    <!-- Grid container -->
+  
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+      © 2022 Copyright:
+      <a class="text-warning" href="https://mdbootstrap.com/">Bučenec Dominik</a>
+    </div>
+    <!-- Copyright -->
+  </footer>
 {%endblock%}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{%block title %} Investments {% endblock %}
+
+{%block content %}
+<div class="container-fluid bg-secondary">
+    <h1>My investments</h1>
+    <div class="row" >
+      {% for stock in investments %}
+      <div class="col-3 bg-dark text-dark">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title">{{stock.stock_name}}</h5>
+            <h5 class="card-title">Total price: {{total_price}} Kč</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{stock.user}}</h6>
+            <p class="card-text"></p>
+            <a href="#" class="card-link">Card link</a>
+            
+          </div>
+        </div>
+      </div>
+    
+    {% endfor %}
+      <div class="col-3 bg-dark text-white rounded">
+        <form method="POST">
+            {% csrf_token %}
+            {{form.as_table}}
+            <input type="submit" value="Submit">
+        </form>
+      </div>
+    </div>
+    
+</div>
+
+<footer class="bg-dark text-center text-warning fixed-bottom">
+  <!-- Grid container -->
+  <div class="container p-4 pb-0">
+    <!-- Section: Social media -->
+    <section class="mb-4">
+      <!-- Facebook -->
+      <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+        ><i class="fab fa-facebook-f"></i
+      ></a>
+
+      <!-- Twitter -->
+      <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+        ><i class="fab fa-twitter"></i
+      ></a>
+
+      <!-- Google -->
+      <a class="btn btn-outline-light btn-floating m-1" href="#!" role="button"
+        ><i class="fab fa-google"></i
+      ></a>
+    </section>
+    <!-- Section: Social media -->
+  </div>
+  <!-- Grid container -->
+
+  <!-- Copyright -->
+  <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+    © 2022 Copyright:
+    <a class="text-warning" href="https://mdbootstrap.com/">Bučenec Dominik</a>
+  </div>
+  <!-- Copyright -->
+</footer>
+
+{% endblock %}

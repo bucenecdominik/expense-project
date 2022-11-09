@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Profile update{%endblock%}
+{% block content %}
+    <div class="container-fluid">
+        <div class="row bg-dark text-white">
+            <h1 class="text-center">Profile update</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-5 bg-dark mt-3 mx-auto">
+                
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% for field in form%}
+                        
+                        <div class="justify-content-center ">
+                            {{field}}
+                        </div>
+                        
+                        {%endfor%}
+                        <br>
+                        <button type="submit" class="btn btn-warning">Update info</button>                   
+                    </form>
+                </div>
+            
+                
+            </div>
+        </div>
+    </div>
+{% endblock %}

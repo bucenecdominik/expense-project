@@ -1,0 +1,28 @@
+frontend
+- Item detail view nastylovat - done, maybe some improvements can be done
+- vymyslet pekny layout na index stránce - done
+- Udělat FAQ a přidat ho do footeru
+- nastylovat grafy
+
+backend
+- balance
+- detailview Item - done
+- index view - graf s hodnotama za měsíc, rok, týden
+- investments - calculations of the saved amount for the next years, include inflation, risks
+- money spent - moznost zapisovat neco mesicne, tydne etc.
+- kazdy mesic report - moznost nastaveni rocni/tydenni/mesicni
+- standing order
+
+
+
+
+hard tasks - naučit se posílat emaily pomocí djanga/potvrzeni registrace
+           - security - 2nd authentication
+
+
+
+next project idea - udelat to jako desktop aplikaci/mobile aplikaci
+		  - to do app
+
+           
+
