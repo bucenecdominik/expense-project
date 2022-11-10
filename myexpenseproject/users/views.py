@@ -6,8 +6,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-from .forms import StandingOrderForm, UserUpdateForm
-from .models import Item, StandingOrder
+from .forms import *
+from .models import *
 from datetime import date, datetime
 from .filters import ItemFilter
 from django.views.generic import *
@@ -26,12 +26,11 @@ class IndexView(View):
             item_list = Item.objects.all()
             order_list = StandingOrder.objects.all()
             sum_price = sum(item.price for item in item_list)
-            budget = 1200000 - sum_price
+            
             return render(request, "index.html", {
             'order_list': order_list,
             'item_list' : item_list,
             'name' : name,
-            'budget' : budget,
             })
 
     def post(self, request):
@@ -126,7 +125,7 @@ class ProfileView(TemplateView):
 
 class ProfileUpdateView(UpdateView):
     template_name = "profile_update.html"
-    form_class = UserUpdateForm
+    form_class = ProfileForm
     model = User
     success_url = "/users/profile"
 
@@ -186,8 +185,7 @@ class StandingOrderDeleteView(DeleteView):
         id_ = self.kwargs.get("id")
         return get_object_or_404(self.model, id=id_)
 
-
-
+#Investments CBV under
 
 
 
