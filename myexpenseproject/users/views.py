@@ -17,20 +17,23 @@ from .forms import ItemForm
 
 # Create your views here.
 class IndexView(View):
+    model = Profile
     def get(self, request):
         user = request.user
         if not user: 
             return redirect('login_user')
         else:
             name = user.username
-            item_list = Item.objects.all()
-            order_list = StandingOrder.objects.all()
-            sum_price = sum(item.price for item in item_list)
-            
+            items = Item.objects.all()
+            standing_orders = StandingOrder.objects.all()
+            sum_items = sum(item.price for item in items)
+            sum_orders = sum(order.price for order in standing_orders)
             return render(request, "index.html", {
-            'order_list': order_list,
-            'item_list' : item_list,
+            'standing_orders': standing_orders,
+            'items' : items,
             'name' : name,
+            'sum_items': sum_items,
+            'sum_orders': sum_orders,
             })
 
     def post(self, request):
@@ -125,7 +128,7 @@ class ProfileView(TemplateView):
 
 class ProfileUpdateView(UpdateView):
     template_name = "profile_update.html"
-    form_class = ProfileForm
+    form_class = UserUpdateForm
     model = User
     success_url = "/users/profile"
 
@@ -136,6 +139,19 @@ class ProfileUpdateView(UpdateView):
     def form_valid(self, form):
         print(form.cleaned_data)
         return super().form_valid(form)
+
+
+
+
+class UserAccountInformationUpdateView(UpdateView):
+    template_name = "user_update.html"
+    model = Profile 
+    form_class = UserAccountUpdateForm
+    success_url = "/users/account_information"
+
+    def get_object(self):
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(self.model, id=id_)
 
 #Standing order CBV under
 class StandingOrderView(CreateView):

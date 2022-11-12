@@ -11,6 +11,7 @@
             <h3 class="mt-3">First name: {{ request.user.first_name}}</h3>
             <h3 class="mt-3">Surname: {{ request.user.last_name}}</h3>
             <h3 class="mt-3">E-mail address: {{ request.user.email}}</h3>
+            <h3 class="mt-3">Budget: {{ request.user.profile.budget}}</h3>
             
             <button type="submit" class="btn btn-warning mb-3 mt-3" action="edit_profile"><a class="link-dark text-decoration-none"href="{% url 'profile_update' id=request.user.id %}">Update info</a></button>
             

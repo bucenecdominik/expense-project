@@ -6,20 +6,20 @@
             <h1 class="text-center">Profile update</h1>
         </div>
         <div class="row">
-            <div class="col-md-5 bg-dark mt-3 mx-auto">
+            <div class="col-md-5 bg-dark mt-0 mx-auto">
                 
                 <div class="card-body">
                     <form method="post">
                         {% csrf_token %}
                         {% for field in form%}
                         
-                        <div class="justify-content-center ">
-                            {{field}}
-                        </div>
+                        <p class="text-warning">{{field.label}}:</p>
+                        {{field}}
+                        
                         
                         {%endfor%}
                         <br>
-                        <button type="submit" class="btn btn-warning">Update info</button>                   
+                        <button type="submit" class="btn btn-warning mt-3">Update info</button>                   
                     </form>
                 </div>
             

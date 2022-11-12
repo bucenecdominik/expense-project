@@ -8,10 +8,10 @@ class StandingOrderForm(ModelForm):
         model = StandingOrder
         fields = ['name', 'price', 'description', 'type']
 
-class ProfileForm(ModelForm):
+class UserAccountUpdateForm(ModelForm):
     class Meta:
         model = Profile
-        fields = ['bio', 'budget']
+        fields = ['monthly_income']
 
 class UserUpdateForm(ModelForm):
     class Meta:

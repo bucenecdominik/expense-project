@@ -9,17 +9,7 @@ class Item(models.Model):
     time_it_was_bought = models.DateTimeField(default= datetime.now())
     price = models.IntegerField()
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
-    budget = models.IntegerField(default=1)
-    bio = models.TextField()
-    
-
-    def __str__(self):
-        return str(self.user)
-
-    
+   
 class StandingOrder(models.Model):
     class Type(models.TextChoices):
         important = "IMPORTANT"
@@ -34,6 +24,26 @@ class StandingOrder(models.Model):
 
     def __str__(self):
         return self.name
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    monthly_income = models.IntegerField(default=1)
+
+    def __str__(self):
+        return str(self.user)
+
+    @property
+    def calculate_budget(self):
+        income = self.monthly_income
+        items = Item.objects.filter(time_it_was_bought__month = datetime.now().month)
+        prices = sum(item.price for item in items)
+        orders = StandingOrder.objects.all()
+        order_prices = sum(order.price for order in orders)
+        budget = income - (prices + order_prices) 
+        return budget
+        
+
+    
 
 
 
