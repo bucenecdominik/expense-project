@@ -6,7 +6,7 @@ from datetime import datetime
 class Item(models.Model):
     name = models.CharField(max_length=25)
     description = models.TextField()
-    time_it_was_bought = models.DateTimeField(default= datetime.now())
+    time_it_was_bought = models.DateTimeField(default=datetime.now())
     price = models.IntegerField()
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
    
@@ -32,15 +32,22 @@ class Profile(models.Model):
     def __str__(self):
         return str(self.user)
 
-    @property
-    def calculate_budget(self):
-        income = self.monthly_income
-        items = Item.objects.filter(time_it_was_bought__month = datetime.now().month)
-        prices = sum(item.price for item in items)
-        orders = StandingOrder.objects.all()
-        order_prices = sum(order.price for order in orders)
-        budget = income - (prices + order_prices) 
-        return budget
+class Ticket(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length = 50)
+    price = models.PositiveIntegerField()
+    description = models.TextField()
+    photo = models.ImageField()
+
+    def __str__(self):
+        return self.name 
+
+    
+
+    
+
+    
+
         
 
     

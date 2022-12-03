@@ -2,7 +2,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import resolve, reverse
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, FileResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
@@ -12,28 +12,32 @@ from datetime import date, datetime
 from .filters import ItemFilter
 from django.views.generic import *
 from .forms import ItemForm
-
-
+from reportlab.pdfgen import canvas
+import io
+from .services import *
 
 # Create your views here.
 class IndexView(View):
     model = Profile
+
     def get(self, request):
         user = request.user
         if not user: 
-            return redirect('login_user')
+            return redirect('login')
         else:
             name = user.username
-            items = Item.objects.all()
-            standing_orders = StandingOrder.objects.all()
-            sum_items = sum(item.price for item in items)
-            sum_orders = sum(order.price for order in standing_orders)
+            items = Item.objects.filter(user=request.user)
+            standing_orders = StandingOrder.objects.filter(user = request.user)
+            sum_items_price = get_sum_items(request.user, datetime.now().month)
+            sum_orders_price = get_sum_orders(request.user)
+            remaining_budget = get_budget(request.user, datetime.now().month)
             return render(request, "index.html", {
             'standing_orders': standing_orders,
             'items' : items,
-            'name' : name,
-            'sum_items': sum_items,
-            'sum_orders': sum_orders,
+            'name' : name,  
+            'sum_items': sum_items_price,
+            'sum_orders' : sum_orders_price,
+            'remaining_budget' : remaining_budget,
             })
 
     def post(self, request):
@@ -42,29 +46,29 @@ class IndexView(View):
 
 
 #login user
-def login_user(request):
-    if request.method == 'POST':
+class LoginView(View):
+    def post(self, request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            messages.success(request, f"You have successfully logged in {username}")
             login(request, user)
-            return render(request, 'index.html', {
-                'user' : user,
-                'name' : username,
-            })
+            messages.success(request, f"You have successfully logged in {username}")
+            return redirect('index')
         else:
             messages.success(request, f"Logging in failed try again.")
             return redirect('login')
-    else:
+        
+    def get(self, request):
         return render(request, 'login.html')
 
-#logouts the user
-def logout_user(request):
-    messages.success(request, f"You have succesfully logged out.")
-    logout(request)
-    return redirect('index')
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        messages.success(request, f'You have successfully logged out.')
+        return redirect('login')
+
 
 
 #Money spent CBV under
@@ -89,7 +93,7 @@ class MoneySpentView(View):
         user = request.user
         item = Item.objects.create(name=name, description=description, time_it_was_bought=time_it_was_bought, price=price, user=user)
         item.save()
-        return HttpResponseRedirect(self.request.path_info)
+        return redirect('money_spent')
 
 class ItemDetailView(DetailView):
     model = Item
@@ -99,32 +103,40 @@ class ItemDetailView(DetailView):
         _id = self.kwargs.get("id")
         return get_object_or_404(self.model, id=_id)
 
-def delete_item(request, item_id):
-    item = Item.objects.get(id = item_id)
-    item.delete()
-    return redirect('money_spent')
+class ItemDeleteView(DeleteView):
+    model = Item
+    def get(self, request, item_id):
+        item = self.model.objects.get(id = item_id)
+        item.delete()
+        return redirect('money_spent')
 
-def register_user(request): 
-    if request.method == 'POST':  
-        form = UserCreationForm(request.POST)  
-        if form.is_valid():  
+class RegisterView(View):
+    template_name = "register.html"
+
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
             form.save()
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
             login(request, user)
             messages.success(request, 'Account created successfully')
-            return render(request, 'index.html')      
-    else:  
-        form = UserCreationForm()  
-    context = {  
-        'form':form  
-    }  
-    return render(request, 'register.html', context)
-
-
+            return render(request, 'index.html')
+        else:
+            messages.success(request, "Something went wrong")
+            return self.get(request)
+    
+    def get(self, request):
+        form = UserCreationForm()
+        context = {
+            'form' : form, 
+        }
+        return render(request, self.template_name, context=context)
+        
 class ProfileView(TemplateView):
     template_name = "profile.html"
+
 
 class ProfileUpdateView(UpdateView):
     template_name = "profile_update.html"
@@ -139,8 +151,6 @@ class ProfileUpdateView(UpdateView):
     def form_valid(self, form):
         print(form.cleaned_data)
         return super().form_valid(form)
-
-
 
 
 class UserAccountInformationUpdateView(UpdateView):
@@ -160,9 +170,12 @@ class StandingOrderView(CreateView):
     form_type = StandingOrderForm
 
     def get(self, request):
-        standing_orders = self.model.objects.all()
+        standing_orders = self.model.objects.filter(user = request.user)
         form = self.form_type
-        context = {'standing_order': standing_orders, 'form': form }
+        context = {
+            'standing_order': standing_orders, 
+            'form': form 
+        }
         return render(request, self.template_name, context)
 
 
@@ -176,6 +189,7 @@ class StandingOrderView(CreateView):
             return redirect('standing_order')
         else:
             return redirect('standing_order')
+
 
 class StandingOrderUpdateView(UpdateView):
     model = StandingOrder
@@ -192,6 +206,7 @@ class StandingOrderUpdateView(UpdateView):
         print(form.cleaned_data)
         return super().form_valid(form)
 
+
 class StandingOrderDeleteView(DeleteView):
     model = StandingOrder
     template_name = "standing_order_delete.html"
@@ -201,7 +216,35 @@ class StandingOrderDeleteView(DeleteView):
         id_ = self.kwargs.get("id")
         return get_object_or_404(self.model, id=id_)
 
-#Investments CBV under
 
+class ReportGenerationView(View):
+    template_name = "reports.html"
+    
+    def get(self, request):
+        user = request.user
+        this_month = get_month()
+        monthly_income = user.profile.monthly_income
+        context = {'user': user, 'this_month' : this_month, 'monthly_income': monthly_income}
+        return render(request, self.template_name, context=context)
 
+    def post(self, request):
+        user = request.user
+        buffer = io.BytesIO()
+        this_month = get_month()
+        p = canvas.Canvas(buffer)
+        string = f"Report for {this_month}"
+        sum_items = f"Items summary: {user.profile.sum_items} CZK"
+        sum_orders = f"Orders summary: {user.profile.sum_orders} CZK"
+        monthly_income = f"Monthly_income: {user.profile.monthly_income}"
+        budget = f"Budget: {user.profile.calculate_budget} CZK"
+        p.drawString(50, 780, string)
+        p.drawString(60, 760, monthly_income)
+        p.drawString(60, 740, sum_items)
+        p.drawString(60, 720, sum_orders)
+        p.drawString(60, 700, budget)
+        p.showPage()
+        p.save()
 
+        buffer.seek(0)
+
+        return FileResponse(buffer, as_attachment=True, filename="report.pdf")

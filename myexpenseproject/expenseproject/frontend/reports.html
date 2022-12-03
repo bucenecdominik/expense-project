@@ -1,0 +1,39 @@
+{%extends "base.html" %}
+{%block title %}Reports{%endblock%}
+
+{%block content %}
+    <div class="container-fluid d-grid gap-3">
+        <div class="row bg-dark text-warning"><h1 class="text-center">Reports</h1></div>
+        <div class="row">
+            <div class="col-md-10">
+                    <div class="card bg-dark text-warning">
+                        <div class="card-header border-secondary">
+                            <h4 class="p-2">Report for {{this_month}}</h4> 
+                        </div>
+                        <div class="card-body">
+                            <p>Monthly income: {{monthly_income}} Kč<br>
+                            Sum of all your expenses: {{user.profile.calculate_expenses}} Kč<br>
+                            Summary of items: {{user.profile.sum_items}} Kč<br>
+                            Summary of standing orders: {{user.profile.sum_orders}} Kč</p> 
+                        </div>
+                        <div class="card-footer border-secondary">
+                            <p>Remaining budget: {{user.profile.calculate_budget}} Kč</p>
+                        </div>
+                    </div>
+                    
+                    
+                
+            </div>
+            <div class="col-md-2">
+                    <div class="card bg-dark text-warning">
+                        <div class="card-header border-secondary">
+                            <h4 class="text-center p-2">Download report in PDF</h4>
+                        </div>
+                        <div class="card-body ">
+                            <form action="" method="post">{% csrf_token %}<button class="btn btn-primary mx-auto"type="submit">Download PDF</button></form>
+                        </div>
+                    </div>                
+            </div>
+        </div>
+    </div>
+{%endblock%}

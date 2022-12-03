@@ -7,11 +7,18 @@ frontend
 backend
 - index view - graf s hodnotama za měsíc, rok, týden 
 - investments - calculations of the saved amount for the next years, include inflation, risks
-- kazdy mesic report - moznost nastaveni rocni/tydenni/mesicni
-- investment view create
-- investment view list- propojeni s nejakym trade API/moznost kalkulace profitu, nastaveni refresh ratu
-moznost nastavit kdy to prodat datefield nepovinne
-- investment view detail - zde bude detailni view na urcity stock
+- kazdy mesic report - mesicni, rocni 
+
+tracking your own projects - profitability or losing money, 
+project MODEL
+- capital
+- investors
+- invested money
+- calculation of ROI
+- income from the project
+- cost of the project
+- overall project profit
+
 
 
 
@@ -28,16 +35,4 @@ next project idea - udelat to jako desktop aplikaci/mobile aplikaci
 DONE
 -detail Item - done
 -standing order - done
--budget - done 
-           
-
-Stock model fields
--index of the stock
--full name of the stock
--actual price
--high
--low
--buying price
--selling price
--profit
--inflation  
+-budget - done
