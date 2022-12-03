@@ -33,7 +33,6 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'users',
-    'expenseproject.apps.ExpenseprojectConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -59,7 +58,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'frontend'),
-                os.path.join(BASE_DIR, 'expenseproject', 'frontend'),],
+                os.path.join(BASE_DIR, 'users', 'frontend'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
